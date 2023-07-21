@@ -47,7 +47,9 @@ class Server:
 
         This method creates a socket, binds it to the server's host and
         port, and listens for incoming connections. When a connection is
-        established, it sends a "Response" message to the client.
+        established, it sends a "Response" message to the client. After
+        responding, the server goes back into listening mode until a
+        KeyboardInterrupt breaks the loop.
 
         Note:
             This method will block until a connection is received.
@@ -65,13 +67,17 @@ class Server:
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind((self.HOST, self.PORT))
             s.listen()
-            conn, addr = s.accept()
-            with conn:
-                print(f"Connected by {addr}")
-                data = b"Response"
-                conn.sendall(data)
+            try:
+                while True:
+                    conn, addr = s.accept()
+                    with conn:
+                        print(f"Connected by {addr}")
+                        data = b"Response"
+                        conn.sendall(data)
+            except KeyboardInterrupt:
+                s.close()
 
 
 if __name__ == "__main__":
     server = Server()
-    server.start_server()
+    server.start()
