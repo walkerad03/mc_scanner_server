@@ -18,3 +18,5 @@ env/
 *.log
 .DS_Store
 *.swp
+
+temp/
